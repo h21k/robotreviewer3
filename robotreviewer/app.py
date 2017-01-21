@@ -5,7 +5,7 @@ RobotReviewer server
 # Authors:  Iain Marshall <mail@ijmarshall.com>
 #           Joel Kuiper <me@joelkuiper.com>
 #           Byron Wallce <byron@ccs.neu.edu>
-
+from robotreviewer.celery import app as celery_app
 import logging, os
 from datetime import datetime, timedelta
 
@@ -19,9 +19,6 @@ LOG_LEVEL = (logging.DEBUG if DEBUG_MODE else logging.INFO)
 logging.basicConfig(level=LOG_LEVEL, format='[%(levelname)s] %(name)s %(asctime)s: %(message)s')
 log = logging.getLogger(__name__)
 log.info("Welcome to RobotReviewer :)")
-
-from robotreviewer.textprocessing.pdfreader import PdfReader
-pdf_reader = PdfReader() # launch Grobid process before anything else
 
 
 from flask import Flask, json, make_response, send_file
@@ -38,18 +35,7 @@ try:
 except ImportError:
     from io import BytesIO as StringIO # py3
 
-from robotreviewer.textprocessing.tokenizer import nlp
 
-''' robots! '''
-# from robotreviewer.robots.bias_robot import BiasRobot
-from robotreviewer.robots.rationale_robot import BiasRobot
-from robotreviewer.robots.pico_robot import PICORobot
-from robotreviewer.robots.rct_robot import RCTRobot
-from robotreviewer.robots.pubmed_robot import PubmedRobot
-# from robotreviewer.robots.mendeley_robot import MendeleyRobot
-# from robotreviewer.robots.ictrp_robot import ICTRPRobot
-from robotreviewer.robots import pico_viz_robot
-from robotreviewer.robots.pico_viz_robot import PICOVizRobot
 
 from robotreviewer.data_structures import MultiDict
 from robotreviewer import report_view
@@ -75,19 +61,9 @@ csrf = CsrfProtect()
 csrf.init_app(app)
 
 
-######
-## robots to be used are loaded here
-######
-log.info("Loading the robots...")
-bots = {"bias_bot": BiasRobot(top_k=3),
-        "pico_bot": PICORobot(),
-        "pubmed_bot": PubmedRobot(),
-        # "ictrp_bot": ICTRPRobot(),
-        "rct_bot": RCTRobot(),
-        "pico_viz_bot": PICOVizRobot()}
-        # "mendeley_bot": MendeleyRobot()}
 
-log.info("Robots loaded successfully! Ready...")
+
+
 
 #####
 ## connect to and set up database
@@ -100,9 +76,6 @@ c.close()
 rr_sql_conn.commit()
 
 
-
-# lastly wait until Grobid is connected
-pdf_reader.connect()
 
 @app.route('/')
 def main():
@@ -130,35 +103,11 @@ def upload_and_annotate():
         c.execute("INSERT INTO article (report_uuid, pdf_uuid, pdf_hash, pdf_file, pdf_filename, timestamp) VALUES(?, ?, ?, ?, ?, ?)", (report_uuid, pdf_uuid, pdf_hash, sqlite3.Binary(blob), filename, datetime.now()))
         rr_sql_conn.commit()
     c.close()
-    return annotate_task(report_uuid)
+    task = celery_app.send_task('robotreviewer.annotator_worker.annotate_task', [report_uuid])
+    result = task.wait(timeout=None, interval=0.5)
 
+    return result
 
-def annotate_task(report_uuid):
-    c = rr_sql_conn.cursor()
-    blobs, article_ids, filenames = [], [], []
-    for i, row in enumerate(c.execute("SELECT pdf_uuid, pdf_file, pdf_filename  FROM article WHERE report_uuid=?", (report_uuid,))):
-        blobs.append(row[1])
-        article_ids.append(row[0])
-        filenames.append(row[2])
-
-    articles = pdf_reader.convert_batch(blobs)
-    parsed_articles = []
-    # tokenize full texts here
-    for doc in nlp.pipe((d.get('text', u'') for d in articles), batch_size=1, n_threads=config.SPACY_THREADS, tag=True, parse=True, entity=False):
-        parsed_articles.append(doc)
-
-    # adjust the tag, parse, and entity values if these are needed later
-    for article, parsed_text in zip(articles, parsed_articles):
-        article._spacy['parsed_text'] = parsed_text
-    for filename, blob, data, pdf_uuid in zip(filenames, blobs, articles, article_ids):
-        data = annotate(data, bot_names=["bias_bot", "pico_bot", "rct_bot", "pico_viz_bot"])
-        data.gold['pdf_uuid'] = pdf_uuid
-        data.gold['filename'] = filename
-        c.execute("UPDATE article SET annotations=? WHERE report_uuid=? AND pdf_uuid=?", (data.to_json(), report_uuid, pdf_uuid))
-        rr_sql_conn.commit()
-    c.close()
-    return json.dumps({"report_uuid": report_uuid,
-                       "pdf_uuids": article_ids})
 
 @app.errorhandler(413)
 def request_entity_too_large(error):
