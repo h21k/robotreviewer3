@@ -15,9 +15,6 @@ def str2bool(v):
 DEBUG_MODE = str2bool(os.environ.get("DEBUG", "true"))
 LOCAL_PATH = "robotreviewer/uploads"
 LOG_LEVEL = (logging.DEBUG if DEBUG_MODE else logging.INFO)
-# determined empirically by Edward; covers 90% of abstracts
-# (crudely and unscientifically adjusted for grobid)
-NUM_WORDS_IN_ABSTRACT = 450
 
 logging.basicConfig(level=LOG_LEVEL, format='[%(levelname)s] %(name)s %(asctime)s: %(message)s')
 log = logging.getLogger(__name__)
@@ -79,7 +76,7 @@ csrf.init_app(app)
 
 
 ######
-## default annotation pipeline defined here
+## robots to be used are loaded here
 ######
 log.info("Loading the robots...")
 bots = {"bias_bot": BiasRobot(top_k=3),
@@ -98,7 +95,7 @@ log.info("Robots loaded successfully! Ready...")
 rr_sql_conn = sqlite3.connect(robotreviewer.get_data('uploaded_pdfs/uploaded_pdfs.sqlite'), detect_types=sqlite3.PARSE_DECLTYPES)
 c = rr_sql_conn.cursor()
 
-c.execute('CREATE TABLE IF NOT EXISTS article(id INTEGER PRIMARY KEY, report_uuid TEXT, pdf_uuid TEXT, pdf_hash TEXT, pdf_file BLOB, annotations TEXT, timestamp TIMESTAMP)')
+c.execute('CREATE TABLE IF NOT EXISTS article(id INTEGER PRIMARY KEY, report_uuid TEXT, pdf_uuid TEXT, pdf_hash TEXT, pdf_file BLOB, pdf_filename TEXT, annotations TEXT, timestamp TIMESTAMP)')
 c.close()
 rr_sql_conn.commit()
 
@@ -127,6 +124,22 @@ def upload_and_annotate():
 
     blobs = [f.read() for f in uploaded_files]
     filenames = [f.filename for f in uploaded_files]
+    for filename, blob in zip(filenames, blobs):
+        pdf_hash = hashlib.sha1(blob).hexdigest()
+        pdf_uuid = rand_id()
+        c.execute("INSERT INTO article (report_uuid, pdf_uuid, pdf_hash, pdf_file, pdf_filename, timestamp) VALUES(?, ?, ?, ?, ?, ?)", (report_uuid, pdf_uuid, pdf_hash, sqlite3.Binary(blob), filename, datetime.now()))
+        rr_sql_conn.commit()
+    c.close()
+    return annotate_task(report_uuid)
+
+
+def annotate_task(report_uuid):
+    c = rr_sql_conn.cursor()
+    blobs, article_ids, filenames = [], [], []
+    for i, row in enumerate(c.execute("SELECT pdf_uuid, pdf_file, pdf_filename  FROM article WHERE report_uuid=?", (report_uuid,))):
+        blobs.append(row[1])
+        article_ids.append(row[0])
+        filenames.append(row[2])
 
     articles = pdf_reader.convert_batch(blobs)
     parsed_articles = []
@@ -134,25 +147,18 @@ def upload_and_annotate():
     for doc in nlp.pipe((d.get('text', u'') for d in articles), batch_size=1, n_threads=config.SPACY_THREADS, tag=True, parse=True, entity=False):
         parsed_articles.append(doc)
 
-
     # adjust the tag, parse, and entity values if these are needed later
     for article, parsed_text in zip(articles, parsed_articles):
         article._spacy['parsed_text'] = parsed_text
-
-    for filename, blob, data in zip(filenames, blobs, articles):
-        pdf_hash = hashlib.md5(blob).hexdigest()
-        pdf_uuid = rand_id()
-        pdf_uuids.append(pdf_uuid)
+    for filename, blob, data, pdf_uuid in zip(filenames, blobs, articles, article_ids):
         data = annotate(data, bot_names=["bias_bot", "pico_bot", "rct_bot", "pico_viz_bot"])
         data.gold['pdf_uuid'] = pdf_uuid
         data.gold['filename'] = filename
-
-        c.execute("INSERT INTO article (report_uuid, pdf_uuid, pdf_hash, pdf_file, annotations, timestamp) VALUES(?, ?, ?, ?, ?, ?)", (report_uuid, pdf_uuid, pdf_hash, sqlite3.Binary(blob), data.to_json(), datetime.now()))
+        c.execute("UPDATE article SET annotations=? WHERE report_uuid=? AND pdf_uuid=?", (data.to_json(), report_uuid, pdf_uuid))
         rr_sql_conn.commit()
     c.close()
-
     return json.dumps({"report_uuid": report_uuid,
-                       "pdf_uuids": pdf_uuids})
+                       "pdf_uuids": article_ids})
 
 @app.errorhandler(413)
 def request_entity_too_large(error):
@@ -184,7 +190,7 @@ def get_study_name(article):
     study_str = ""
     if not authors is None:
         study_str = authors[0]["lastname"] + " et al."
-    else: 
+    else:
         #import pdb; pdb.set_trace()
         study_str = article['filename'][:20].lower().replace(".pdf", "") + " ..."
     return study_str
@@ -204,13 +210,13 @@ def produce_report(report_uuid, reportformat, download=False, PICO_vectors=True)
         # embeddings only relatively meaningful; do not generate
         # if we have only 1 study.
         if len(articles) < 2:
-            PICO_vectors = False 
+            PICO_vectors = False
 
         pico_plot_html = u""
         if PICO_vectors:
             study_names, p_vectors, i_vectors, o_vectors = [], [], [], []
             p_words, i_words, o_words = [], [], []
-            for article in articles: 
+            for article in articles:
                 study_names.append(get_study_name(article))
                 p_vectors.append(np.array(article.ml["p_vector"]))
                 p_words.append(article.ml["p_words"])
@@ -222,8 +228,8 @@ def produce_report(report_uuid, reportformat, download=False, PICO_vectors=True)
                 o_words.append(article.ml["o_words"])
 
 
-            vectors_d = {"population":np.vstack(p_vectors), 
-                         "intervention":np.vstack(i_vectors), 
+            vectors_d = {"population":np.vstack(p_vectors),
+                         "intervention":np.vstack(i_vectors),
                          "outcomes":np.vstack(o_vectors)}
 
             words_d = {"population":p_words, "intervention":i_words, "outcomes":o_words}
@@ -232,7 +238,7 @@ def produce_report(report_uuid, reportformat, download=False, PICO_vectors=True)
                                             "{0}-PICO-embeddings".format(report_uuid))
 
 
-        return render_template('reportview.{}'.format(reportformat), headers=bots['bias_bot'].get_domains(), articles=articles, 
+        return render_template('reportview.{}'.format(reportformat), headers=bots['bias_bot'].get_domains(), articles=articles,
                                 pico_plot=pico_plot_html, report_uuid=report_uuid, online=(not download), reportformat=reportformat)
     elif reportformat=='json':
         return json.dumps({"article_ids": article_ids,
@@ -297,7 +303,6 @@ def annotation_pipeline(bot_names, data):
     return data
 
 
-# TODO make something that calls this
 def cleanup_database(days=1):
     """
     remove any PDFs which have been here for more than
