@@ -1,6 +1,4 @@
-from __future__ import absolute_import, unicode_literals
-
-from .celery import app
+import zerorpc
 import os
 import logging
 
@@ -61,46 +59,54 @@ log.info("Robots loaded successfully! Ready...")
 # lastly wait until Grobid is connected
 pdf_reader.connect()
 
-@app.task
-def annotate_task(report_uuid):
-    c = rr_sql_conn.cursor()
-    blobs, article_ids, filenames = [], [], []
-    for i, row in enumerate(c.execute("SELECT pdf_uuid, pdf_file, pdf_filename  FROM article WHERE report_uuid=?", (report_uuid,))):
-        blobs.append(row[1])
-        article_ids.append(row[0])
-        filenames.append(row[2])
+import zerorpc
 
-    articles = pdf_reader.convert_batch(blobs)
-    parsed_articles = []
-    # tokenize full texts here
-    for doc in nlp.pipe((d.get('text', u'') for d in articles), batch_size=1, n_threads=config.SPACY_THREADS, tag=True, parse=True, entity=False):
-        parsed_articles.append(doc)
+class AnnotationRPC(object):
 
-    # adjust the tag, parse, and entity values if these are needed later
-    for article, parsed_text in zip(articles, parsed_articles):
-        article._spacy['parsed_text'] = parsed_text
-    for filename, blob, data, pdf_uuid in zip(filenames, blobs, articles, article_ids):
-        data = annotate(data, bot_names=["bias_bot", "pico_bot", "rct_bot", "pico_viz_bot"])
-        data.gold['pdf_uuid'] = pdf_uuid
-        data.gold['filename'] = filename
-        c.execute("UPDATE article SET annotations=? WHERE report_uuid=? AND pdf_uuid=?", (data.to_json(), report_uuid, pdf_uuid))
-        rr_sql_conn.commit()
-    c.close()
-    return json.dumps({"report_uuid": report_uuid,
-                       "pdf_uuids": article_ids})
+    def annotate_task(self, report_uuid):
+        c = rr_sql_conn.cursor()
+        blobs, article_ids, filenames = [], [], []
+        for i, row in enumerate(c.execute("SELECT pdf_uuid, pdf_file, pdf_filename  FROM article WHERE report_uuid=?", (report_uuid,))):
+            blobs.append(row[1])
+            article_ids.append(row[0])
+            filenames.append(row[2])
 
-def annotate(data, bot_names=["bias_bot"]):
-    #
-    # ANNOTATION TAKES PLACE HERE
-    # change the line below if you wish to customise or
-    # add a new annotator
-    #
-    annotations = annotation_pipeline(bot_names, data)
-    return annotations
+        articles = pdf_reader.convert_batch(blobs)
+        parsed_articles = []
+        # tokenize full texts here
+        for doc in nlp.pipe((d.get('text', u'') for d in articles), batch_size=1, n_threads=config.SPACY_THREADS, tag=True, parse=True, entity=False):
+            parsed_articles.append(doc)
 
-def annotation_pipeline(bot_names, data):
-    for bot_name in bot_names:
-        log.debug("Sending doc to {} for annotation...".format(bots[bot_name].__class__.__name__))
-        data = bots[bot_name].annotate(data)
-        log.debug("{} done!".format(bots[bot_name].__class__.__name__))
-    return data
+        # adjust the tag, parse, and entity values if these are needed later
+        for article, parsed_text in zip(articles, parsed_articles):
+            article._spacy['parsed_text'] = parsed_text
+        for filename, blob, data, pdf_uuid in zip(filenames, blobs, articles, article_ids):
+            data = annotate(data, bot_names=["bias_bot", "pico_bot", "rct_bot", "pico_viz_bot"])
+            data.gold['pdf_uuid'] = pdf_uuid
+            data.gold['filename'] = filename
+            c.execute("UPDATE article SET annotations=? WHERE report_uuid=? AND pdf_uuid=?", (data.to_json(), report_uuid, pdf_uuid))
+            rr_sql_conn.commit()
+        c.close()
+        return json.dumps({"report_uuid": report_uuid,
+                           "pdf_uuids": article_ids})
+
+    def annotate(self, data, bot_names=["bias_bot"]):
+        #
+        # ANNOTATION TAKES PLACE HERE
+        # change the line below if you wish to customise or
+        # add a new annotator
+        #
+        annotations = annotation_pipeline(bot_names, data)
+        return annotations
+
+    def annotation_pipeline(self, bot_names, data):
+        for bot_name in bot_names:
+            log.debug("Sending doc to {} for annotation...".format(bots[bot_name].__class__.__name__))
+            data = bots[bot_name].annotate(data)
+            log.debug("{} done!".format(bots[bot_name].__class__.__name__))
+        return data
+
+
+s = zerorpc.Server(AnnotationRPC())
+s.bind("tcp://0.0.0.0:4242")
+s.run()

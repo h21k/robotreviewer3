@@ -8,6 +8,7 @@ RobotReviewer server
 from robotreviewer.celery import app as celery_app
 import logging, os
 from datetime import datetime, timedelta
+import zerorpc
 
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
@@ -61,7 +62,7 @@ csrf = CsrfProtect()
 csrf.init_app(app)
 
 
-
+zrpc_client = zerorpc.Client()
 
 
 
@@ -103,8 +104,8 @@ def upload_and_annotate():
         c.execute("INSERT INTO article (report_uuid, pdf_uuid, pdf_hash, pdf_file, pdf_filename, timestamp) VALUES(?, ?, ?, ?, ?, ?)", (report_uuid, pdf_uuid, pdf_hash, sqlite3.Binary(blob), filename, datetime.now()))
         rr_sql_conn.commit()
     c.close()
-    task = celery_app.send_task('robotreviewer.annotator_worker.annotate_task', [report_uuid])
-    result = task.wait(timeout=None, interval=0.5)
+
+    result = zrpc_client.annotate_task(report_uuid)
 
     return result
 
