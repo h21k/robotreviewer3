@@ -1,6 +1,7 @@
 import zerorpc
 import os
 import logging
+from flask import json
 
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
@@ -81,7 +82,7 @@ class AnnotationRPC(object):
         for article, parsed_text in zip(articles, parsed_articles):
             article._spacy['parsed_text'] = parsed_text
         for filename, blob, data, pdf_uuid in zip(filenames, blobs, articles, article_ids):
-            data = annotate(data, bot_names=["bias_bot", "pico_bot", "rct_bot", "pico_viz_bot"])
+            data = self.annotate(data, bot_names=["bias_bot", "pico_bot", "rct_bot", "pico_viz_bot"])
             data.gold['pdf_uuid'] = pdf_uuid
             data.gold['filename'] = filename
             c.execute("UPDATE article SET annotations=? WHERE report_uuid=? AND pdf_uuid=?", (data.to_json(), report_uuid, pdf_uuid))
@@ -96,7 +97,7 @@ class AnnotationRPC(object):
         # change the line below if you wish to customise or
         # add a new annotator
         #
-        annotations = annotation_pipeline(bot_names, data)
+        annotations = self.annotation_pipeline(bot_names, data)
         return annotations
 
     def annotation_pipeline(self, bot_names, data):
@@ -107,6 +108,6 @@ class AnnotationRPC(object):
         return data
 
 
-s = zerorpc.Server(AnnotationRPC())
+s = zerorpc.Server(AnnotationRPC(), heartbeat=30)
 s.bind("tcp://0.0.0.0:4242")
 s.run()

@@ -5,10 +5,10 @@ RobotReviewer server
 # Authors:  Iain Marshall <mail@ijmarshall.com>
 #           Joel Kuiper <me@joelkuiper.com>
 #           Byron Wallce <byron@ccs.neu.edu>
-from robotreviewer.celery import app as celery_app
 import logging, os
 from datetime import datetime, timedelta
 import zerorpc
+
 
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
@@ -62,7 +62,8 @@ csrf = CsrfProtect()
 csrf.init_app(app)
 
 
-zrpc_client = zerorpc.Client()
+zrpc_client = zerorpc.Client(timeout=300, heartbeat=30)
+zrpc_client.connect("tcp://127.0.0.1:4242")
 
 
 
