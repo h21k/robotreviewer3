@@ -111,18 +111,42 @@ define(function (require) {
 
     },
     addAnnotation: function(content) {
+      var self = this;
       var marginalia = this.getActive();
+      var url = window.location.href.split('?');
+      var url_parts = url[0].split("/");
+      var pdf_uuid = url_parts[url_parts.length-1];
+      var report_uuid = url_parts[url_parts.length-2];
+      var query_str = url[1].split("&");
+      var ux_uuid = 'id';
+      for(var key in query_str){
+        var kv = query_str[key].split("=");
+        if(kv[0] == 'ux_uuid'){
+          ux_uuid = kv[1];
+        }
+      }
       marginalia.forEach(function(marginalis) {
         var annotations = marginalis.get("annotations");
 
         annotations.add(new Annotation({
           content: content,
-          uuid: guid(),
+          uuid: ux_uuid,
           sessionStart: startTime,
           createdAt: new Date(),
           elapsedTime: Math.abs(startTime - new Date())
         }));
       });
+      $.ajax({
+            url: '/savemarginalia/'+report_uuid+'/'+pdf_uuid+'/'+ux_uuid,
+            type: "POST",
+            data: {data:JSON.stringify({marginalia: self.toJSON()})},
+            success: function(data) {
+              //alert(data.toSource());
+            },
+            error: function(err) {
+              alert('Error on saving!');
+            }
+          });
     }
   });
 

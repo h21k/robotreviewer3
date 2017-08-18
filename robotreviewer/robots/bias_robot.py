@@ -76,6 +76,7 @@ class BiasRobot:
         doc_sent_end_i = [sent.end_char for sent in doc_text.sents]
 
         structured_data = []
+        u = uuid.uuid1()
 
         for domain in self.bias_domains:
 
@@ -122,10 +123,10 @@ class BiasRobot:
             X = self.vec.builder_transform()
 
             bias_pred = self.doc_clf.predict(X)
-            bias_class = ["high/unclear", "low"][bias_pred[0]]
+            bias_class = ["high", "unclear", "low"][bias_pred[0]]
             annotation_metadata = [{"content": sent[0],
                                     "position": sent[1],
-                                    "uuid": str(uuid.uuid1()),
+                                    "uuid": str("default"),
                                     "prefix": sent[2],
                                     "suffix": sent[3]} for sent in zip(high_prob_sents, high_prob_start_i,
                                        high_prob_prefixes,
@@ -133,7 +134,7 @@ class BiasRobot:
 
             structured_data.append({
                 "domain": domain,
-                "judgement": bias_class,
+                "judgement": [{"judgement" : bias_class, "uuid" : "default"}],
                 "annotations": annotation_metadata})
         data.ml["bias"] = structured_data
         return data

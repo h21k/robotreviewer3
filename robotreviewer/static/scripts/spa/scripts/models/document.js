@@ -212,6 +212,88 @@ define(function (require) {
       pages.on("ready", function(e, obj) {
         self.set("state", RenderingStates.FINISHED);
       });
+      setInterval(self.update_timer,1000);
+    },
+    update_timer: function() {
+      var hours = parseInt($('#hh').text());
+      var minutes = parseInt($('#mm').text());
+      var seconds = parseInt($('#ss').text());
+
+      seconds = seconds + 1;
+      if(seconds == 60){
+        minutes = minutes + 1;
+        seconds = 0;
+        if(minutes == 60){
+          hours = hours + 1;
+          minutes = 0;
+        }
+      }
+
+      if(seconds<10){
+        seconds = '0' + seconds;
+      }
+      if(minutes < 10){
+        minutes = '0' + minutes;
+      }
+      if(hours < 10){
+        hours = '0' + hours;
+      }
+
+      $('#timer').find('#hh').text(hours);
+      $('#timer').find('#mm').text(minutes);
+      $('#timer').find('#ss').text(seconds);
+    },
+    submit_time: function(link) {
+      var hh = parseInt($('#hh').text());
+      var mm = parseInt($('#mm').text());
+      var ss = parseInt($('#ss').text());
+
+      var time_spent = (hh * 3600) + (mm * 60) + ss;
+
+      var url = window.location.href.split('?');
+      var url_parts = url[0].split("/");
+      var pdf_uuid = url_parts[url_parts.length-1];
+      var report_uuid = url_parts[url_parts.length-2];
+      var query_str = url[1].split("&");
+      var ux_uuid = 'id';
+      for(var key in query_str){
+        var kv = query_str[key].split("=");
+        if(kv[0] == 'ux_uuid'){
+          ux_uuid = kv[1];
+        }
+      }
+
+      $.ajax({
+        url: '/submit_time/'+report_uuid+'/'+pdf_uuid+'/'+ux_uuid,
+        type: "POST",
+        data: {data:time_spent},
+        success: function(data) {
+          window.location.href = link;
+        },
+        error: function(err) {
+          //alert(err.toSource());
+          alert('Error on saving!');
+        }
+      });
+    },
+    next_link: function() {
+      var self = this;
+      var url = window.location.href.split('?');
+      var url_parts = url[0].split("/");
+      var pdf_uuid = url_parts[url_parts.length-1];
+      var report_uuid = url_parts[url_parts.length-2];
+
+      $.ajax({
+        url: '/get_next/'+pdf_uuid,
+        type: "POST",
+        async: false,
+        success: function(data) {
+          var response = JSON.parse(data);
+          var url_parts = response.toString().split(",");
+          var nextLink = '/#document/' + url_parts[0] + '/' + url_parts[1];
+          return nextLink;
+        }
+      });
     },
     annotate: function(marginalia) {
       var self = this; // *sigh*
@@ -259,6 +341,32 @@ define(function (require) {
       var annotationsPerPage = getAnnotationsPerPage(marginalia);
       self.get("pages").map(function(page, pageIndex) {
         page.set({annotations: annotationsPerPage[pageIndex] || []});
+      });
+    },
+    rr_annotate: function(marginalia){
+      var url = window.location.href.split('?');
+      var url_parts = url[0].split("/");
+      var pdf_uuid = url_parts[url_parts.length-1];
+      var report_uuid = url_parts[url_parts.length-2];
+      var query_str = url[1].split("&");
+      var ux_uuid = 'id';
+      for(var key in query_str){
+        var kv = query_str[key].split("=");
+        if(kv[0] == 'ux_uuid'){
+          ux_uuid = kv[1];
+        }
+      }
+      $.ajax({
+        url: '/savemarginalia/'+report_uuid+'/'+pdf_uuid+'/'+ux_uuid,
+        type: "POST",
+        data: {data:JSON.stringify({marginalia : marginalia})},
+        success: function(data) {
+          //alert(data.toSource());
+        },
+        error: function(err) {
+          //alert(err.toSource());
+          alert('Error on saving!');
+        }
       });
     },
     getText: function() {

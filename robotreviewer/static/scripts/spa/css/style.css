@@ -394,3 +394,9 @@ canvas {
   background-color: white;
 
 }
+#timer {
+  margin-left: 20px;
+}
+#timer span {
+  font-size: 22px;
+}

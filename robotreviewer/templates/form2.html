@@ -1,0 +1,227 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}
+susnaire
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
+{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
+<div class="container">
+    <main class="container signup-section">
+      <div class="section-content">
+        <h2>Please score the following 10 items with one of five responses that range from Strongly disagree (1) to Strongly agree (5). </h2>
+		<br>
+		<br>
+        <form method="POST" action="{{url_for('form2', ux_uuid=ux_uuid)}}">
+          {{ form.hidden_tag() }}
+			
+		  
+          <div class="form-group">
+          
+
+            {{ form.first_sus.label }}
+ 			
+            {% if form.first_sus.errors %}
+              {% for error in form.first_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+			<div id=first> 
+            {{ form.first_sus }}
+            </div>
+          </div>
+         
+
+          <div class="form-group">
+            {{ form.second_sus.label }}
+            
+            {% if form.second_sus.errors %}
+              {% for error in form.second_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.second_sus }}
+          </div>
+
+          <div class="form-group">
+            {{ form.third_sus.label }}
+
+            {% if form.third_sus.errors %}
+              {% for error in form.third_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.third_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.fourth_sus.label }}
+
+            {% if form.fourth_sus.errors %}
+              {% for error in form.fourth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.fourth_sus }}
+          </div>
+          
+            <div class="form-group">
+            {{ form.fifth_sus.label }}
+
+            {% if form.fifth_sus.errors %}
+              {% for error in form.fifth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.fifth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.sixth_sus.label }}
+
+            {% if form.sixth_sus.errors %}
+              {% for error in form.sixth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.sixth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.seventh_sus.label }}
+
+            {% if form.seventh_sus.errors %}
+              {% for error in form.seventh_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.seventh_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.eighth_sus.label }}
+
+            {% if form.eighth_sus.errors %}
+              {% for error in form.eighth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.eighth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.ninth_sus.label }}
+
+            {% if form.ninth_sus.errors %}
+              {% for error in form.ninth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.ninth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.tenth_sus.label }}
+
+            {% if form.tenth_sus.errors %}
+              {% for error in form.tenth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.tenth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.eleventh_sus.label }}
+
+            {% if form.eleventh_sus.errors %}
+              {% for error in form.eleventh_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.eleventh_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.twelfth_sus.label }}
+
+            {% if form.twelfth_sus.errors %}
+              {% for error in form.twelfth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.twelfth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.thirteenth_sus.label }}
+
+            {% if form.thirteenth_sus.errors %}
+              {% for error in form.thirteenth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.thirteenth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.fourteenth_sus.label }}
+
+            {% if form.fourteenth_sus.errors %}
+              {% for error in form.fourteenth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.fourteenth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.fifteenth_sus.label }}
+
+            {% if form.fifteenth_sus.errors %}
+              {% for error in form.fifteenth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.fifteenth_sus }}
+          </div>
+          
+          <div class="form-group">
+            {{ form.sixteenth_sus.label }}
+
+            {% if form.sixteenth_sus.errors %}
+              {% for error in form.sixteenth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.sixteenth_sus }}
+          </div>
+          
+          
+          <p>ID TEST:</p>
+          <p class="ux_uuid" style="color:blue">{{ ux_uuid }}</p>
+          {{ form.submit(class="btn-primary") }}
+        </form>
+      </div>
+
+    </main>
+</div>
+{% endblock %}
+
+

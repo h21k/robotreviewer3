@@ -36,7 +36,7 @@ define(function (require) {
   var UploadView = React.createFactory(require("jsx!views/upload"));
   var ReportView = React.createFactory(require("jsx!views/report"));
 
-  var isEditable = false;
+  var isEditable = true;
 
   var Router = Backbone.Router.extend({
     routes : {
@@ -69,8 +69,28 @@ define(function (require) {
       // Models
       var documentModel = new (require("spa/models/document"))();
       var marginaliaModel = new (require("spa/models/marginalia"))();
+      var next_link = '#';
+      var spare_time = 0;
+      var url = window.location.href;
+      var url_parts = url.split("?");
+      var query_str = url_parts[1].split("&");
+      var ux_uuid = 'id';
+      var flag = 1;
+      var task_id = 1;
+      for(var key in query_str){
+        var kv = query_str[key].split("=");
+        if(kv[0] == 'ux_uuid'){
+          ux_uuid = kv[1];
+        }
+        if(kv[0] == 'flag'){
+          flag = kv[1];
+        }
+        if(kv[0] == 'task_id'){
+          task_id = kv[1];
+        }
+      }
 
-      var marginaliaUrl = "/marginalia/" + reportId + "/" + documentId + "?annotation_type=" + type;
+      var marginaliaUrl = "/marginalia/" + reportId + "/" + documentId + "?annotation_type=" + type + "&ux_uuid=" + ux_uuid + "&task_id=" + task_id;
       $.get(marginaliaUrl, function(data) {
         var marginalia = {marginalia: JSON.parse(data)};
         marginaliaModel.reset(marginaliaModel.parse(marginalia));
@@ -82,9 +102,35 @@ define(function (require) {
       var documentUrl = "/pdf/" + reportId + "/" + documentId;
       documentModel.loadFromUrl(documentUrl, uuid);
 
+      var nextUrl = "/get_next/" + documentId + '?ux_uuid=' + ux_uuid + '&flag=' + flag;
+      $.ajax({
+        url: nextUrl,
+        type: "POST",
+        async: false,
+        success: function(data) {
+          next_link = JSON.parse(data);
+          //next_link = '/#document/' + urls[0] + '/' + urls[1] + '?annotation_type=' + type + "&ux_uuid=" + ux_uuid;
+        },
+        error: function(err){
+          //alert(err.toSource());
+        }
+      });
+
+      var timeUrl = '/get_time/' + reportId + '/' + documentId + '/' + ux_uuid;
+      $.ajax({
+        url: timeUrl,
+        type: "POST",
+        async: false,
+        success: function(data) {
+          spare_time = parseInt(JSON.parse(data)); // in sec
+        }
+      });
+
       ReactDOM.render(
         new DocumentView({document: documentModel,
                           marginalia: marginaliaModel,
+                          next_link: next_link,
+                          time_spent: spare_time,
                           isEditable: isEditable}),
         node);
 

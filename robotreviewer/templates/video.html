@@ -1,0 +1,13 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}
+Instruction Video
+{% endblock %}
+
+{% block content %}
+<h2>PLEASE WATCH THE FOLLOWING VIDEO !</h2>
+<p>current ID: {{ ux_uuid }}</p>
+<iframe src="https://www.youtube.com/embed/G7-n36MBs1A" width="853" height="480" frameborder="0" allowfullscreen></iframe>
+<br>
+<a href="{{ doc_url }}" class="btn btn-default">Continue</a>
+<br>
+{% endblock %}

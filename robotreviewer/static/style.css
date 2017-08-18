@@ -1,0 +1,26 @@
+.container {
+list-style-type: none;
+}
+
+.form-group{
+list-style-type:
+}
+
+.body {
+list-style-type: none;
+}
+
+.center {
+    margin: auto;
+    width: none;
+    border: 3px solid #73AD21;
+    padding: 10px;
+}
+.front{
+    margin: auto;
+    width: auto;
+    border: none;
+    padding: 10px;
+}
+
+#first { height:100%; }
