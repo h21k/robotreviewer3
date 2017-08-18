@@ -224,9 +224,20 @@ def form2(ux_uuid):
             print("VALIDATE ME !")
             return render_template('/form2.html', form=form, ux_uuid=ux_uuid)
         else:
-            #
-            #mylist = json.dumps(form.first_question)
-            print('I STORED ALL THE FORM DATA IN THE SQLITE3 DB here - and GO ON TO:')
+            print("CHECKPOINT GAMMA")
+            print('_________________')
+            print('VVVVVVVVVVVVVVVVV')
+            print(ux_uuid, type(ux_uuid))
+            print(form.first_sus.data, type(form.first_sus.data))
+            print(form.second_sus.data, type(form.second_sus.data))
+            print(form.third_sus.data, type(form.third_sus.data))
+            print(form.seventeenth_sus.data, type(form.seventeenth_sus.data))
+            print('=================================')
+            c = rr_sql_conn.cursor()
+            c.execute("UPDATE form SET F1=?, F2=?, F3=?, F4=?, F5=?, F6=?, F7=?, F8=?, F9=?, F10=?, F11=?, F12=?, F13=?, F14=?, F15=?, F16=?, T1=? WHERE ux_uuid=?", (form.first_sus.data, form.second_sus.data, form.third_sus.data, form.fourth_sus.data, form.fifth_sus.data, form.sixth_sus.data, form.seventh_sus.data, form.eighth_sus.data, form.ninth_sus.data, form.tenth_sus.data, form.eleventh_sus.data, form.twelfth_sus.data, form.thirteenth_sus.data, form.fourteenth_sus.data, form.fifteenth_sus.data, form.sixteenth_sus.data, form.seventeenth_sus.data, ux_uuid))
+            rr_sql_conn.commit()
+            c.close()
+
             return render_template('blank.html', ux_uuid=ux_uuid)
 
     elif request.method == 'GET':
