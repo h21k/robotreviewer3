@@ -1,7 +1,6 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %}
-susnaire
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
 {% endblock %}
 {% block content %}
@@ -14,28 +13,28 @@ susnaire
 		<br>
         <form method="POST" action="{{url_for('form2', ux_uuid=ux_uuid)}}">
           {{ form.hidden_tag() }}
-			
-		  
+
+
           <div class="form-group">
-          
+
 
             {{ form.first_sus.label }}
- 			
+
             {% if form.first_sus.errors %}
               {% for error in form.first_sus.errors %}
                 <p class="error-message" style="color:red">{{ error }}</p>
               {% endfor %}
             {% endif %}
 
-			<div id=first> 
+			<div id=first>
             {{ form.first_sus }}
             </div>
           </div>
-         
+
 
           <div class="form-group">
             {{ form.second_sus.label }}
-            
+
             {% if form.second_sus.errors %}
               {% for error in form.second_sus.errors %}
                 <p class="error-message" style="color:red">{{ error }}</p>
@@ -56,7 +55,7 @@ susnaire
 
             {{ form.third_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.fourth_sus.label }}
 
@@ -68,7 +67,7 @@ susnaire
 
             {{ form.fourth_sus }}
           </div>
-          
+
             <div class="form-group">
             {{ form.fifth_sus.label }}
 
@@ -80,7 +79,7 @@ susnaire
 
             {{ form.fifth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.sixth_sus.label }}
 
@@ -92,7 +91,7 @@ susnaire
 
             {{ form.sixth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.seventh_sus.label }}
 
@@ -104,7 +103,7 @@ susnaire
 
             {{ form.seventh_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.eighth_sus.label }}
 
@@ -116,7 +115,7 @@ susnaire
 
             {{ form.eighth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.ninth_sus.label }}
 
@@ -128,7 +127,7 @@ susnaire
 
             {{ form.ninth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.tenth_sus.label }}
 
@@ -140,7 +139,7 @@ susnaire
 
             {{ form.tenth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.eleventh_sus.label }}
 
@@ -152,7 +151,7 @@ susnaire
 
             {{ form.eleventh_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.twelfth_sus.label }}
 
@@ -164,7 +163,7 @@ susnaire
 
             {{ form.twelfth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.thirteenth_sus.label }}
 
@@ -176,7 +175,7 @@ susnaire
 
             {{ form.thirteenth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.fourteenth_sus.label }}
 
@@ -188,7 +187,7 @@ susnaire
 
             {{ form.fourteenth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.fifteenth_sus.label }}
 
@@ -200,7 +199,7 @@ susnaire
 
             {{ form.fifteenth_sus }}
           </div>
-          
+
           <div class="form-group">
             {{ form.sixteenth_sus.label }}
 
@@ -212,8 +211,20 @@ susnaire
 
             {{ form.sixteenth_sus }}
           </div>
-          
-          
+
+          <div class="form-group">
+            {{ form.seventeenth_sus.label }}
+
+            {% if form.seventeenth_sus.errors %}
+              {% for error in form.seventeenth_sus.errors %}
+                <p class="error-message" style="color:red">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+
+            {{ form.seventeenth_sus }}
+          </div>
+
+
           <p>ID TEST:</p>
           <p class="ux_uuid" style="color:blue">{{ ux_uuid }}</p>
           {{ form.submit(class="btn-primary") }}
@@ -223,5 +234,3 @@ susnaire
     </main>
 </div>
 {% endblock %}
-
-

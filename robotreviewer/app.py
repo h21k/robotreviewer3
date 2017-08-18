@@ -104,7 +104,7 @@ rr_sql_conn = sqlite3.connect(robotreviewer.get_data('uploaded_pdfs/uploaded_pdf
 c = rr_sql_conn.cursor()
 
 c.execute('CREATE TABLE IF NOT EXISTS article(id INTEGER PRIMARY KEY, report_uuid TEXT, pdf_uuid TEXT, pdf_hash TEXT, pdf_file BLOB, annotations TEXT, timestamp TIMESTAMP, dont_delete INTEGER, timespan TEXT DEFAULT 0)')
-c.execute('CREATE TABLE IF NOT EXISTS form(id INTEGER PRIMARY KEY, ux_uuid VARCHAR(21), pdf_uuid TEXT, first_question TEXT, second_question VARCHAR(21), third_question VARCHAR(21), flag INTEGER)')
+c.execute('CREATE TABLE IF NOT EXISTS form(id INTEGER PRIMARY KEY, ux_uuid VARCHAR(21), pdf_uuid TEXT, first_question TEXT, second_question VARCHAR(21), third_question VARCHAR(21), flag INTEGER, F1 INTEGER, F2 INTEGER, F3 INTEGER, F4 INTEGER, F5 INTEGER, F6 INTEGER, F7 INTEGER, F8 INTEGER, F9 INTEGER, F10 INTEGER, F11 INTEGER, F12 INTEGER, F13 INTEGER, F14 INTEGER, F15 INTEGER, F16 INTEGER, T1 TEXT)')
 c.execute('CREATE TABLE IF NOT EXISTS links(id INTEGER PRIMARY KEY, list_urls TEXT, username TEXT, flag TEXT)')
 c.close()
 rr_sql_conn.commit()

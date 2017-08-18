@@ -1,6 +1,6 @@
 # first we import a view helpful classes from flask-WTF
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, SubmitField, RadioField
+from wtforms import StringField, SelectField, SelectMultipleField, SubmitField, RadioField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length
 
 class QuestionForm(Form):
@@ -13,20 +13,21 @@ class QuestionForm(Form):
     submit = SubmitField('Submit & Continue')
 
 class QuestionForm2(Form):
-	first_sus = RadioField('I think I would like to use this system frequently.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	second_sus= RadioField('I found the system unnecessarily complex.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	third_sus = RadioField('I thought the system was easy to use.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	fourth_sus = RadioField('I think that I would need the support of a technical person to be able to use this system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	fifth_sus = RadioField('I found the various functions in this system were well integrated.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	sixth_sus = RadioField('I thought there was too much inconsistency in this system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	seventh_sus = RadioField('I would imagine that most people would learn to use this system very quickly.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	eighth_sus = RadioField('I found the system very cumbersome to use.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	ninth_sus = RadioField('I felt very confident using the system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	tenth_sus = RadioField('I needed to learn a lot of things before I could get going with this system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	eleventh_sus = RadioField('I found the text suggested by the computer helpful in completing the task.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	twelfth_sus = RadioField('I found it difficult to navigate to the sections of the article suggested as relevant by the model.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	thirteenth_sus = RadioField('I feel that having the computer suggest text to reviewers would improve the quality of the final output (i.e., the information extracted for the systematic review).', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	fourteenth_sus = RadioField('I felt the text suggested by the computer was often irrelevant.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	fifteenth_sus = RadioField('I was confused by the text that the computer suggested.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	sixteenth_sus = RadioField('I would like to continue using this system to aid systematic review production.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-	submit = SubmitField('Submit & Continue')
+    first_sus = RadioField('I think I would like to use this system frequently.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    second_sus= RadioField('I found the system unnecessarily complex.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    third_sus = RadioField('I thought the system was easy to use.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    fourth_sus = RadioField('I think that I would need the support of a technical person to be able to use this system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    fifth_sus = RadioField('I found the various functions in this system were well integrated.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    sixth_sus = RadioField('I thought there was too much inconsistency in this system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    seventh_sus = RadioField('I would imagine that most people would learn to use this system very quickly.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    eighth_sus = RadioField('I found the system very cumbersome to use.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    ninth_sus = RadioField('I felt very confident using the system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    tenth_sus = RadioField('I needed to learn a lot of things before I could get going with this system.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    eleventh_sus = RadioField('I found the text suggested by the computer helpful in completing the task.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    twelfth_sus = RadioField('I found it difficult to navigate to the sections of the article suggested as relevant by the model.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    thirteenth_sus = RadioField('I feel that having the computer suggest text to reviewers would improve the quality of the final output (i.e., the information extracted for the systematic review).', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    fourteenth_sus = RadioField('I felt the text suggested by the computer was often irrelevant.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    fifteenth_sus = RadioField('I was confused by the text that the computer suggested.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    sixteenth_sus = RadioField('I would like to continue using this system to aid systematic review production.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
+    seventeenth_sus = TextAreaField('Text', validators=[DataRequired()])
+    submit = SubmitField('Submit & Continue')
