@@ -103,7 +103,7 @@ log.info("Robots loaded successfully! Ready...")
 rr_sql_conn = sqlite3.connect(robotreviewer.get_data('uploaded_pdfs/uploaded_pdfs.sqlite'), detect_types=sqlite3.PARSE_DECLTYPES)
 c = rr_sql_conn.cursor()
 
-c.execute('CREATE TABLE IF NOT EXISTS article(id INTEGER PRIMARY KEY, report_uuid TEXT, pdf_uuid TEXT, pdf_hash TEXT, pdf_file BLOB, annotations TEXT, timestamp TIMESTAMP, dont_delete INTEGER, timespan TEXT DEFAULT 0)')
+c.execute('CREATE TABLE IF NOT EXISTS article(id INTEGER PRIMARY KEY, report_uuid TEXT, pdf_uuid TEXT, pdf_hash TEXT, pdf_file BLOB, annotations TEXT, timestamp TIMESTAMP, dont_delete INTEGER, timespan TEXT DEFAULT null)')
 c.execute('CREATE TABLE IF NOT EXISTS form(id INTEGER PRIMARY KEY, ux_uuid VARCHAR(21), pdf_uuid TEXT, first_question TEXT, second_question VARCHAR(21), third_question VARCHAR(21), flag INTEGER, F1 INTEGER, F2 INTEGER, F3 INTEGER, F4 INTEGER, F5 INTEGER, F6 INTEGER, F7 INTEGER, F8 INTEGER, F9 INTEGER, F10 INTEGER, F11 INTEGER, F12 INTEGER, F13 INTEGER, F14 INTEGER, F15 INTEGER, F16 INTEGER, T1 TEXT)')
 c.execute('CREATE TABLE IF NOT EXISTS links(id INTEGER PRIMARY KEY, list_urls TEXT, username TEXT, flag TEXT)')
 c.close()
@@ -454,7 +454,7 @@ def get_marginalia(report_uuid, pdf_uuid):
             for row in data.ml["bias"]:
                 annotation_metadata = []
                 for sent in row["annotations"]:
-                    if sent["uuid"] == ux_uuid or (sent["uuid"] == 'default' and task_id == 1):
+                    if sent["uuid"] == ux_uuid or ('default' in sent["uuid"] and task_id == 1):
                         annotation_metadata.append({"content" : sent["content"],
                                                 "position" : sent["position"],
                                                 "uuid"  : sent["uuid"],
@@ -466,6 +466,7 @@ def get_marginalia(report_uuid, pdf_uuid):
                     if judgement["uuid"] == ux_uuid:
                         judge = judgement["judgement"]
                         find = False
+                        break;
                     elif find and task_id==1 and judgement["uuid"] == "default":
                         judge = judgement["judgement"]
                 structured_data.append({"domain" : row["domain"],
@@ -574,11 +575,13 @@ def get_time(report_uuid, pdf_uuid, ux_uuid):
     c = rr_sql_conn.cursor()
     c.execute("SELECT timespan FROM article WHERE report_uuid=? AND pdf_uuid=?", (report_uuid, pdf_uuid))
     elapse = c.fetchone()
-    t_data = json.loads(elapse[0])
+    #t_data = json.loads(elapse[0])
     timespan = 0
-    for row in t_data:
-        if row["uuid"] == ux_uuid:
-            timespan = row["time"]
+    if(elapse[0]):
+        t_data = json.loads(elapse[0])
+        for row in t_data:
+            if row["uuid"] == ux_uuid:
+                timespan = row["time"]
     return json.dumps(timespan)
 
 @csrf.exempt # TODO: add csrf back in

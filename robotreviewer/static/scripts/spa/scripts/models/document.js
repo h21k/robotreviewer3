@@ -268,7 +268,13 @@ define(function (require) {
         type: "POST",
         data: {data:time_spent},
         success: function(data) {
-          window.location.href = link;
+          if($('.block').find('form.collapse').length > 0){
+            if(confirm('Are you sure you want to leave this page? All your unsaved data will be lost, like all your Risk of Bias will be lost. Please press OK to continue or Cancel to stay on this page.')){
+              window.location.href = link;
+            }
+          }else{
+            window.location.href = link;
+          }
         },
         error: function(err) {
           //alert(err.toSource());

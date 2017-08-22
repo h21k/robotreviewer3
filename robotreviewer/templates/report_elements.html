@@ -67,7 +67,11 @@
           {% endif %}
           </td>
           {% for domain in study.get('bias', []) %}
-          <td class="{% if domain['judgement'] == 'low' %}risk-low{% elif domain['judgement'] == 'high/unclear' %}risk-high{% endif %}">{{ '+' if domain['judgement'] == 'low' else '?' }}</td>
+          {% for u_domain in domain.get('judgement', []) %}
+          {% if u_domain['uuid'] == 'default' %}
+          <td class="{% if u_domain['judgement'].strip() == 'low' %}risk-low{% elif u_domain['judgement'].strip() == 'high/unclear' or u_domain['judgement'].strip() == 'high' %}risk-high{% endif %}">{{ '+' if u_domain['judgement'].strip() == 'low' else '?' }}</td>
+          {% endif %}
+          {% endfor %}
           {% endfor %}
         </tr>
         {% endfor %}
@@ -112,7 +116,11 @@
         {% for domain in study.get('bias', []) %}
         <tr>
           <td>{{ domain['domain'] }}</td>
-          <td>{{ domain['judgement'] }}</td>
+          {% for u_domain in domain.get('judgement', []) %}
+          {% if u_domain['uuid'] == 'default' %}
+          <td>{{ u_domain['judgement'] }}</td>
+          {% endif %}
+          {% endfor %}
           <td>
             <ol class="judgement">
             {% for ann in domain['annotations'] %}

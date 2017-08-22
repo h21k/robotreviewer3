@@ -8,10 +8,13 @@ define(function (require) {
 
   var Editable = React.createClass({
     getInitialState: function() {
-      return { editable: false };
+      return { editable: true, value: this.props.content };
     },
     edit: function() {
       this.setState({ editable: true});
+    },
+    change: function(e) {
+      this.setState({value: e.target.value});
     },
     submit: function(e) {
       this.setState({ editable: false });
@@ -64,7 +67,7 @@ define(function (require) {
       }
     },
     render: function() {
-      var content = this.props.content || "*Click to edit*";
+      var content = this.state.value || "*Click to edit*";
       if(content.indexOf("**Overall risk of bias prediction**") == -1){
         content = "**Overall risk of bias prediction**: "+content;
       }
@@ -74,7 +77,7 @@ define(function (require) {
               <div className="small-10 columns">
                 <div className="row collapse">
                   <label className="small-8 column"><strong>Overall risk of bias prediction:</strong></label>
-                  <select className="small-4 column" value={this.props.content.replace("**Overall risk of bias prediction**:","").trim()} ref="input" onChange={(e) => this.props.changeHandler(e.target.value)}>
+                  <select className="small-4 column" value={this.state.value.replace("**Overall risk of bias prediction**:","").trim()} ref="input" onChange={this.change}>
                     <option value=""></option>
                     <option value="unclear">Unclear</option>
                     <option value="low">Low</option>
