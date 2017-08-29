@@ -188,6 +188,14 @@ def form1(ux_uuid):
             rr_sql_conn.commit()
             c.close()
 
+            #checking the ux_uuid and links transferred correctly
+            c = rr_sql_conn.cursor()
+            c.execute("SELECT list_urls FROM links WHERE username = ?", (search_id,))
+            a = c.fetchall()
+            c.close()
+            print(a)
+
+
             #return redirect(url_for('ux'))
             #return render_template('video.html', ux_uuid=ux_uuid)
             return redirect(url_for('video', ux_uuid=ux_uuid))
