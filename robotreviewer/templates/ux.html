@@ -5,11 +5,12 @@ WELCOME
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
-
+<link href="{{ url_for('static', filename='scripts/bootstrap.min.css') }}" rel="stylesheet">
 
 <div class="center">
-<h2> Semi-Automating Data Extraction for Systematic Reviews </h2>
+<h2><b> Semi-Automating Data Extraction for Systematic Reviews </b></h2>
 <h2> Informed consent form </h2>
+<p></p>
 <h3> Purpose of this study </h3>
 <p> This is a study to assess the utility of semi-automated methods that aim to make the processes involved in evidence synthesis more efficient via novel software. </p>
 <h3> What will be done </h3>
@@ -24,15 +25,12 @@ WELCOME
 <h3> How the findings will be used </h3>
 <p> The results of the study will be used only for scholarly purposes. Results may be presented at conferences, and may be included in a published manuscript. No information about specific individuals will ever be included in such presentations. </p>
 <h3> Contact information </h3>
-<p> Please direct any concerns and / or questions to Dr. Byron Wallace (mailto:b.wallace@northeastern.edu). </p> 
+<p> Please direct any concerns and / or questions to Dr. Byron Wallace (<a href="mailto:b.wallace@northeastern.edu">b.wallace@northeastern.edu</a>). </p>
 <p> By beginning the survey, you acknowledge that you have read this information and agree to participate in this research, with the knowledge that you are free to withdraw your participation at any time without penalty. </p>
-
 <p></p>
 <a href="{{url_for('form1', ux_uuid=ux_uuid)}}" class="btn btn-default">Continue</a>
 </div>
-
 <div class="front">
-
 </div>
 
 {% endblock %}

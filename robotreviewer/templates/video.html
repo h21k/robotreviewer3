@@ -4,10 +4,16 @@ Instruction Video
 {% endblock %}
 
 {% block content %}
-<h2>PLEASE WATCH THE FOLLOWING VIDEO !</h2>
-<p>current ID: {{ ux_uuid }}</p>
-<iframe src="https://www.youtube.com/embed/G7-n36MBs1A" width="853" height="480" frameborder="0" allowfullscreen></iframe>
-<br>
-<a href="{{ doc_url }}" class="btn btn-default">Continue</a>
-<br>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
+<link href="{{ url_for('static', filename='scripts/bootstrap.min.css') }}" rel="stylesheet">
+<div class='centerV'>
+  <h3>Please watch the folloing video instructions</h3>
+  <p>current ID: {{ ux_uuid }}</p>
+  <iframe src="http://roosevelt.devron-systems.com/ux.mp4" width="853" height="480" frameborder="0" align="center" allowfullscreen></iframe>
+  <br>
+  <div class='buttn'>
+  <a href="{{ doc_url }}" class="btn btn-default">Continue</a>
+  <br>
+  </div>
+</div>
 {% endblock %}

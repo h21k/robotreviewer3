@@ -29,5 +29,5 @@ class QuestionForm2(Form):
     fourteenth_sus = RadioField('I felt the text suggested by the computer was often irrelevant.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
     fifteenth_sus = RadioField('I was confused by the text that the computer suggested.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
     sixteenth_sus = RadioField('I would like to continue using this system to aid systematic review production.', choices=[('1','1'), ('2','2'), ('3', '3'), ('4', '4'), ('5', '5')], validators=[DataRequired()])
-    seventeenth_sus = TextAreaField('Text', validators=[DataRequired()])
+    seventeenth_sus = TextAreaField('Is there anything you would like to let us know?')
     submit = SubmitField('Submit & Continue')

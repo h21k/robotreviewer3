@@ -7,7 +7,7 @@ RobotReviewer server
 #           Byron Wallace <byron@ccs.neu.edu>
 
 import logging, os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # remove info message about TF compilation performance
 from datetime import datetime, timedelta
 
 def str2bool(v):

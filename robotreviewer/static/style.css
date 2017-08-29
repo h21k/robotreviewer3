@@ -1,26 +1,104 @@
 .container {
-list-style-type: none;
+    list-style-type: none;
 }
-
-.form-group{
-list-style-type:
+.form-group {
+    list-style-type: none;
 }
-
 .body {
-list-style-type: none;
+    list-style-type: none;
 }
-
 .center {
     margin: auto;
     width: none;
     border: 3px solid #73AD21;
     padding: 10px;
 }
-.front{
+.centerV {
+    margin: auto;
+    width: none;
+    border: 3px solid #73AD21;
+    text-align: center;
+}
+.front {
     margin: auto;
     width: auto;
     border: none;
     padding: 10px;
 }
-
-#first { height:100%; }
+.buttn {
+    margin: auto;
+    margin-top: 20px;
+    text-align: center;
+}
+#first_question {
+    height: 180px;
+    border: 1px solid;
+}
+#second_question {
+    list-style-type: none;
+}
+#third_question {
+    list-style-type: none;
+}
+#first {
+    height:100%;
+}
+#ce {
+    margin: auto;
+    width: 50%;
+    border: 3px solid green;
+    padding: 10px;
+}
+#first_sus{
+    list-style-type: none;
+}
+#second_sus{
+    list-style-type: none;
+}
+#third_sus{
+    list-style-type: none;
+}
+#fourth_sus{
+    list-style-type: none;
+}
+#fifth_sus{
+    list-style-type: none;
+}
+#sixth_sus{
+    list-style-type: none;
+}
+#seventh_sus{
+    list-style-type: none;
+}
+#eighth_sus{
+    list-style-type: none;
+}
+#ninth_sus{
+    list-style-type: none;
+}
+#tenth_sus{
+    list-style-type: none;
+}
+#eleventh_sus{
+    list-style-type: none;
+}
+#twelfth_sus{
+    list-style-type: none;
+}
+#thirteenth_sus{
+    list-style-type: none;
+}
+#fourteenth_sus{
+    list-style-type: none;
+}
+#fifteenth_sus{
+    list-style-type: none;
+}
+#sixteenth_sus{
+    list-style-type: none;
+}
+#seventeenth_sus{
+    width: 500px;
+    height: 100px;
+    border: 1px solid;
+}

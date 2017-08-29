@@ -1,14 +1,15 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %}
-<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
 {% endblock %}
 {% block content %}
+<link href="{{ url_for('static', filename='scripts/bootstrap.min.css') }}" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
+
 <div class="container">
     <main class="container signup-section">
       <div class="section-content">
-        <h2>Please score the following 10 items with one of five responses that range from Strongly disagree (1) to Strongly agree (5). </h2>
+        <h3>Please score the following 10 items with one of five responses that range from Strongly disagree (1) to Strongly agree (5). </h3>
 		<br>
 		<br>
         <form method="POST" action="{{url_for('form2', ux_uuid=ux_uuid)}}">
@@ -26,9 +27,9 @@
               {% endfor %}
             {% endif %}
 
-			<div id=first>
+
             {{ form.first_sus }}
-            </div>
+
           </div>
 
 
@@ -220,7 +221,7 @@
                 <p class="error-message" style="color:red">{{ error }}</p>
               {% endfor %}
             {% endif %}
-
+          <br>
             {{ form.seventeenth_sus }}
           </div>
 

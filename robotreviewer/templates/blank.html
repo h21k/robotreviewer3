@@ -1,11 +1,20 @@
 {% extends "bootstrap/base.html" %}
 {% block title %}
-THANK YOU
+Thank you!
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css') }}"</link>
+<link href="{{ url_for('static', filename='scripts/bootstrap.min.css') }}" rel="stylesheet">
 
-<p>Thank you for participating in the study!</p>
+<div class='centerV'>
+<br>
+<p>Thank you for participating in the RobotReviewer user-study!</p>
+<br>
+<img border="0" alt="RobotReviewer" height="100px" width="400px" src="static/img/logo_ux.png">
+<br>
+<p></p>
+</div>
 <p>current ID: {{ ux_uuid }}</p>
 
 {% endblock %}
