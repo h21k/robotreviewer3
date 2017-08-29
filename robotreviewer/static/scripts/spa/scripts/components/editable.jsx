@@ -86,7 +86,7 @@ define(function (require) {
                   </div>
                 </div>
               <div className="small-2 columns">
-                <button href="#" className="button postfix" onClick={this.submit}>Edit</button>
+                <button href="#" className="button postfix" onClick={this.submit}>SAVE</button>
               </div>
             </form>
         );

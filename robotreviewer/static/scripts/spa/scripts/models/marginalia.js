@@ -68,7 +68,7 @@ define(function (require) {
       var marginalia = _.clone(data.marginalia);
       _.each(marginalia, function(marginalis, idx) {
         var id = marginalis.id || toClassName(marginalis.title);
-        marginalis.active = idx === 0;
+        marginalis.active = idx === false;
         marginalis.id = id;
         marginalis.color = colors[idx % colors.length];
       });

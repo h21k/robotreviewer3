@@ -19,6 +19,7 @@ define(function (require) {
     return _sync(method, model, options);
   };
 
+/*
   // Breadcrumbs hack
   var breadcrumbsModel = new (require("models/breadcrumbs"))();
   var BreadcrumbsComponent = React.createFactory(require("jsx!components/breadcrumbs"));
@@ -30,6 +31,7 @@ define(function (require) {
   breadcrumbsModel.on("all", function(e, obj) {
     breadcrumbs.forceUpdate();
   });
+*/
 
   // Component views
   var DocumentView = React.createFactory(require("jsx!views/document"));
