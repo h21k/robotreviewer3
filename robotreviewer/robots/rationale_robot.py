@@ -34,13 +34,13 @@ import numpy as np
 from collections import OrderedDict, defaultdict
 
 import robotreviewer
-from robotreviewer.ml.classifier import MiniClassifier
-from robotreviewer.ml.vectorizer import ModularVectorizer
+#from robotreviewer.ml.classifier import MiniClassifier
+#from robotreviewer.ml.vectorizer import ModularVectorizer
 
-import sys
-sys.path.append('robotreviewer/ml') # need this for loading the rationale_CNN module
-from rationale_CNN import RationaleCNN, Document
-
+#import sys
+#sys.path.append('robotreviewer/ml') # need this for loading the rationale_CNN module
+# from rationale_CNN import RationaleCNN, Document
+# above not needed for user testing
 
 class BiasRobot:
 
