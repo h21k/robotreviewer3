@@ -34,26 +34,21 @@ RUN chown -R deploy.deploy /var/lib/deploy/
 
 ## From here on we're the deploy user
 USER deploy
-RUN cd /var/lib/deploy/ && wget https://github.com/kermitt2/grobid/archive/grobid-parent-0.4.1.zip -O grobid.zip
-RUN cd /var/lib/deploy/ && unzip grobid.zip
-RUN cd /var/lib/deploy/grobid-grobid-parent-0.4.1 && mvn -Dmaven.test.skip=true clean install
+
 
 # install Anaconda
 RUN aria2c -s 16 -x 16 -k 30M https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /var/lib/deploy/Anaconda.sh
 RUN cd /var/lib/deploy && bash Anaconda.sh -b && rm -rf Anaconda.sh
 ENV PATH=/var/lib/deploy/miniconda3/bin:$PATH
 RUN conda install python=3.5.0
-RUN conda config --add channels spacy
 RUN conda install cython
-RUN conda install system flask numpy scipy scikit-learn spacy flask-wtf requests gensim mkl mkl-service matplotlib seaborn h5py
+RUN conda install system flask numpy scipy scikit-learn flask-wtf requests mkl mkl-service matplotlib seaborn h5py
 RUN conda install pyqt=4.11
-RUN python -m spacy.en.download
 
 # install Python dependencies
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
-RUN python -m nltk.downloader punkt stopwords
 
 # Get data
 USER root
@@ -75,5 +70,4 @@ ENV ROBOTREVIEWER_GROBID_PATH=/var/lib/deploy/grobid-grobid-parent-0.4.1
 ENV ROBOTREVIEWER_GROBID_HOST=http://0.0.0.0:8080
 ENV DEV false
 ENV DEBUG false
-ENV KERAS_BACKEND=theano
 ENTRYPOINT ["/var/lib/deploy/run"]
