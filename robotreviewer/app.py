@@ -88,7 +88,10 @@ c.close()
 rr_sql_conn.commit()
 
 
-
+@app.route('/doc/')
+def main():
+    resp = make_response(render_template('index.html'))
+    return resp
 
 @app.route('/', methods=['GET', 'POST'])
 def ux():
@@ -118,7 +121,7 @@ def ux():
 
 
     for i in list_urls:
-        s.append({"link" : "%s%s%s" % ('/#document/', list_urls[u], '?annotation_type=bias_bot'), "ux_user" : ux_uuid})
+        s.append({"link" : "%s%s%s" % ('/doc/#document/', list_urls[u], '?annotation_type=bias_bot'), "ux_user" : ux_uuid})
         u = u + 1
     p = {}
     p["link_meta"] = s
