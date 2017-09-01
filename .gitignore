@@ -97,5 +97,4 @@ nbproject
 robotreviewer/data/uploaded_pdfs/*
 deploy.tar.gz
 !.gitkeep
-robotreviewer/config.json
 !robotreviewer/config.json.example
