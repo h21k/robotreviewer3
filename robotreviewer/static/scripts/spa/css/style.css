@@ -400,4 +400,5 @@ canvas {
 }
 #timer span {
   font-size: 22px;
+  display: none;
 }

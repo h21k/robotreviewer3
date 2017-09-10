@@ -90,7 +90,7 @@ define(function (require) {
           <div>
             <Document id="viewer" pdf={documentModel} marginalia={marginaliaModel} isEditable={isEditable} />
             <div id="side">
-              <button href="#" className="button" onClick={this.endSession}>Next</button><span id="timer"><span id="hh">{hours}</span>:<span id="mm">{minutes}</span>:<span id="ss">{seconds}</span></span>
+              <button href="#" className="button" onClick={this.endSession}>Next</button><span id="timer"><span id="hh">{hours}</span><span id="mm">{minutes}</span><span id="ss">{seconds}</span></span>
               <Marginalia marginalia={marginaliaModel} isEditable={isEditable} />
             </div>
           </div>
