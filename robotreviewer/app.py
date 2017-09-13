@@ -257,7 +257,9 @@ def request_entity_too_large(error):
     ''' @TODO not sure if we want to return something else here? '''
     return json.dumps({'success':False, 'error':True}), 413, {'ContentType':'application/json'}
 
-
+@app.route('/download_sql/'+ config.SECRET_DOWNLOAD_KEY)
+def download_data():
+    return send_file(open(robotreviewer.get_data('uploaded_pdfs/uploaded_pdfs.sqlite'), 'rb'), attachment_filename='data.sqlite', as_attachment=True)
 
 @app.route('/pdf/<report_uuid>/<pdf_uuid>')
 def get_pdf(report_uuid, pdf_uuid):
