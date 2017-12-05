@@ -98,3 +98,8 @@ robotreviewer/data/uploaded_pdfs/*
 deploy.tar.gz
 !.gitkeep
 !robotreviewer/config.json.example
+
+# recent conda and pycharm stuff? .idea files etc
+*.idea
+.idea/*
+bin/*
