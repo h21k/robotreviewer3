@@ -269,7 +269,7 @@ define(function (require) {
         data: {data:time_spent},
         success: function(data) {
           if($('.block').find('form.collapse').length > 0){
-            if(confirm('Are you sure you want to leave this page? Please press [OK] to leave or [Cancel] to stay on this page.')){
+            if(confirm('Did you add your overall-judgements in the revelvant sections and pressed the [SAVE] button? Press [OK] to leave or [CANCEL] to stay on this page.')){
               window.location.href = link;
             }
           }else{
