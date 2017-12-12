@@ -269,7 +269,7 @@ define(function (require) {
         data: {data:time_spent},
         success: function(data) {
           if($('.block').find('form.collapse').length > 0){
-            if(confirm('Did you add your overall-judgements in the revelvant sections and pressed the [SAVE] button? Press [OK] to leave or [CANCEL] to stay on this page.')){
+            if(confirm('Have you finished editing the overall bias judgements (in the relevant Risk-of-Bias categories), and saved them? Click [CANCEL] to go back and check, or click [OK] to move to the next document.')){
               window.location.href = link;
             }
           }else{
