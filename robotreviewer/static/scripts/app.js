@@ -8,6 +8,7 @@ define(function (require) {
   var _ = require("underscore");
   var $ = require("jquery");
   var FileUtil = require("spa/helpers/fileUtil");
+  var swal = require("spa/helpers/sweetalert2.all");
 
 
   // Set CSRF

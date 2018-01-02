@@ -5,6 +5,7 @@ define(function (require) {
   var Q = require("Q");
   var _ = require("underscore");
   var Backbone = require("backbone");
+  var swal = require("spa/helpers/sweetalert2.all");
 
   var quoteRegex = function(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -263,14 +264,46 @@ define(function (require) {
         }
       }
 
+      // $.ajax({
+      //   url: '/submit_time/'+report_uuid+'/'+pdf_uuid+'/'+ux_uuid,
+      //   type: "POST",
+      //   data: {data:time_spent},
+      //   success: function(data) {
+      //     if($('.block').find('form.collapse').length > 0){
+      //       if(confirm('Have you finished editing the overall bias judgements (in the relevant Risk-of-Bias categories), and saved them? Click [CANCEL] to go back and check, or click [OK] to move to the next document.')){
+      //         window.location.href = link;
+      //       }
+      //     }else{
+      //       window.location.href = link;
+      //     }
+      //   },
+      //   error: function(err) {
+      //     //alert(err.toSource());
+      //     alert('Error on saving!');
+      //   }
+      // });
+
       $.ajax({
         url: '/submit_time/'+report_uuid+'/'+pdf_uuid+'/'+ux_uuid,
         type: "POST",
         data: {data:time_spent},
         success: function(data) {
           if($('.block').find('form.collapse').length > 0){
-            if(confirm('Have you finished editing the overall bias judgements (in the relevant Risk-of-Bias categories), and saved them? Click [CANCEL] to go back and check, or click [OK] to move to the next document.')){
-              window.location.href = link;
+            if(swal({
+  title: 'Are you sure?',
+  html: "Have you finished editing the overall bias predictions <br> (in the relevant Risk-of-Bias categories), <br> and saved them?",
+  type: 'question',
+  showCancelButton: true,
+  cancelButtonText: 'No, stay on this page!',
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, move to next document!'
+}).then((result) => {
+  if (result.value) {
+    window.location.href = link;
+  }
+})){
+              //window.location.href = link;
             }
           }else{
             window.location.href = link;
@@ -281,6 +314,7 @@ define(function (require) {
           alert('Error on saving!');
         }
       });
+      
     },
     next_link: function() {
       var self = this;
