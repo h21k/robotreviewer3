@@ -55,7 +55,7 @@ define(function (require) {
             },
             error: function(err) {
               //alert(err.toSource());
-              alert('Error on saving!');
+              //alert('Error on saving!');
             }
           });
       });
@@ -79,7 +79,7 @@ define(function (require) {
                   <label className="small-8 column"><strong>Overall risk of bias prediction:</strong></label>
                   <select className="small-4 column" value={this.state.value.replace("**Overall risk of bias prediction**:","").trim()} ref="input" onChange={this.change}>
                     <option value=""></option>
-                    
+
                     <option value="low">Low</option>
                     <option value="high/unclear">High/Unclear</option>
                     </select>

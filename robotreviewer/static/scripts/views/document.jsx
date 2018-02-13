@@ -25,15 +25,18 @@ define(function (require) {
         case "annotations:change":
           break;
         case "change:active":
+        case "change:description":
+          documentModel.rr_annotate(marginaliaModel);
         case "annotations:add":
         case "annotations:remove":
           documentModel.annotate(marginaliaModel.getActive());
-          documentModel.rr_annotate(marginaliaModel);
           self.forceUpdate();
           break;
         case "annotations:select":
           self.forceUpdate();
           break;
+        case "annotations:destroy":
+          documentModel.rr_annotate(marginaliaModel);
         default:
           break;
         }

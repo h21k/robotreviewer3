@@ -257,9 +257,9 @@ def request_entity_too_large(error):
     ''' @TODO not sure if we want to return something else here? '''
     return json.dumps({'success':False, 'error':True}), 413, {'ContentType':'application/json'}
 
-@app.route('/download_sql/'+ config.SECRET_DOWNLOAD_KEY)
-def download_data():
-    return send_file(open(robotreviewer.get_data('uploaded_pdfs/uploaded_pdfs.sqlite'), 'rb'), attachment_filename='data.sqlite', as_attachment=True)
+#@app.route('/download_sql/'+ config.SECRET_DOWNLOAD_KEY)
+#def download_data():
+#    return send_file(open(robotreviewer.get_data('uploaded_pdfs/uploaded_pdfs.sqlite'), 'rb'), attachment_filename='data.sqlite', as_attachment=True)
 
 @app.route('/pdf/<report_uuid>/<pdf_uuid>')
 def get_pdf(report_uuid, pdf_uuid):
@@ -294,12 +294,20 @@ def get_marginalia(report_uuid, pdf_uuid):
             for row in data.ml["bias"]:
                 annotation_metadata = []
                 for sent in row["annotations"]:
-                    if sent["uuid"] == ux_uuid or ('default' in sent["uuid"] and task_id == 1):
-                        annotation_metadata.append({"content" : sent["content"],
-                                                "position" : sent["position"],
-                                                "uuid"  : sent["uuid"],
-                                                "prefix" : sent["prefix"],
-                                                "suffix" : sent["suffix"]})
+                    if (sent["uuid"] == ux_uuid or (bool('default' in sent["uuid"]) and task_id == 1)):
+                        if 'deleted' in sent:
+                            if sent["deleted"]!=1:
+                                annotation_metadata.append({"content" : sent["content"],
+                                                        "position" : sent["position"],
+                                                        "uuid"  : sent["uuid"],
+                                                        "prefix" : sent["prefix"],
+                                                        "suffix" : sent["suffix"]})
+                        else:
+                            annotation_metadata.append({"content" : sent["content"],
+                                                    "position" : sent["position"],
+                                                    "uuid"  : sent["uuid"],
+                                                    "prefix" : sent["prefix"],
+                                                    "suffix" : sent["suffix"]})
                 find = True
                 judge = ""
                 for judgement in row["judgement"]:
@@ -320,6 +328,7 @@ def get_marginalia(report_uuid, pdf_uuid):
 @app.route('/savemarginalia/<report_uuid>/<pdf_uuid>/<ux_uuid>', methods=['POST'])
 def savemarginalia(report_uuid, pdf_uuid, ux_uuid):
     marginalia = request.form['data']
+    task_id = int(request.form['task'])
     conn = sqlite3.connect(robotreviewer.get_data('uploaded_pdfs/uploaded_pdfs.sqlite'), detect_types=sqlite3.PARSE_DECLTYPES)
     c = conn.cursor()
     c.execute("SELECT annotations FROM article WHERE report_uuid=? AND pdf_uuid=?", (report_uuid, pdf_uuid))
@@ -327,15 +336,45 @@ def savemarginalia(report_uuid, pdf_uuid, ux_uuid):
     data = MultiDict()
     data.load_json(annotation_json[0])
     structured_data_d = []
+    search = 'default'
+    user_annotations_annotations = []
+    already_deleted_deleted = []
     for row_d in data.ml['bias']:
         annotation_d_metadata = []
+        user_annotations = []
+        already_deleted = []
+        positions_y = []
+        contents_y = []
         for sent in row_d["annotations"]:
+            if (search in sent["uuid"] and task_id == 1) or sent["uuid"] == ux_uuid:
+                if "deleted" in sent:
+                    value = int(sent["deleted"])
+                else:
+                    value = 0;
+                if value == 0:
+                    positions_y.append(sent["position"])
+                    contents_y.append(sent["content"])
+                    user_annotations.append({"content" : sent["content"],
+                                            "position" : sent["position"],
+                                            "uuid"  : sent["uuid"],
+                                            "prefix" : sent["prefix"],
+                                            "suffix" : sent["suffix"],
+                                            "deleted" : value})
+                if value == 1 and sent["position"] not in positions_y and sent["content"] not in contents_y:
+                    already_deleted.append({"content" : sent["content"],
+                                            "position" : sent["position"],
+                                            "uuid"  : sent["uuid"],
+                                            "prefix" : sent["prefix"],
+                                            "suffix" : sent["suffix"],
+                                            "deleted" : value})
             if sent["uuid"] != ux_uuid:
                 annotation_d_metadata.append({"content" : sent["content"],
                                         "position" : sent["position"],
                                         "uuid"  : sent["uuid"],
                                         "prefix" : sent["prefix"],
                                         "suffix" : sent["suffix"]})
+        user_annotations_annotations.append(user_annotations)
+        already_deleted_deleted.append(already_deleted)
         judgement_data = []
         for judgement in row_d["judgement"]:
             if judgement["uuid"] != ux_uuid:
@@ -346,30 +385,76 @@ def savemarginalia(report_uuid, pdf_uuid, ux_uuid):
     datam = MultiDict()
     datam.load_json(marginalia)
     structured_data = []
-    for row in datam.marginalia:
+    # print("=====================================")
+    # print(datam.marginalia)
+    # print("++++++++++++++++++++")
+    # print(user_annotations_annotations)
+    # print("=====================================")
+    for k , (row , mark) in enumerate(zip(datam.marginalia , user_annotations_annotations)):
         bias_class = row["description"].replace("**Overall risk of bias prediction**:","")
-        if bias_class=="high" or bias_class=="unclear" or bias_class=="low":
+        if bias_class=="high" or bias_class=="unclear" or bias_class=="low" or bias_class=="high/unclear":
             bias_class = bias_class
         else:
             bias_class = ""
         annotation_metadata = []
+        contents_x = []
+        positions_x = []
         for sent in row["annotations"]:
             if sent["uuid"] == ux_uuid:
-                annotation_metadata.append({"content" : sent["content"],
-                                            "position" : sent["position"],
-                                            "uuid"  : sent["uuid"],
-                                            "prefix" : sent["prefix"],
-                                            "suffix" : sent["suffix"]})
+                if "deleted" in sent:
+                    value_x = int(sent["deleted"])
+                else:
+                    value_x = 0
+                if value_x == 0:
+                    contents_x.append(sent["content"])
+                    positions_x.append(sent["position"])
+                    annotation_metadata.append({"content" : sent["content"],
+                                                "position" : sent["position"],
+                                                "uuid"  : sent["uuid"],
+                                                "prefix" : sent["prefix"],
+                                                "suffix" : sent["suffix"],
+                                                "deleted" : value_x})
+            for item in mark:
+                if "deleted" in item:
+                    value = int(item["deleted"])
+                else:
+                    value = 0
+                if sent["position"]==item["position"] and sent["content"]==item["content"]:
+                    if (sent["uuid"] == ux_uuid and value == 0 and sent["content"] in contents_x and sent["position"] in positions_x) or (search in sent["uuid"] and value==0):
+                        user_annotations_annotations[k].remove(item)
         judgement_data_d = [{"uuid" : ux_uuid,
-                                "judgement" : bias_class}]
+                            "judgement" : bias_class}]
         structured_data.append({"domain" : row["title"],
                                 "judgement" : judgement_data_d,
                                 "annotations" : annotation_metadata})
+    user_annotations_annotations_d = []
+    for row,deleted_row in zip(user_annotations_annotations,already_deleted_deleted):
+        user_annotations_d = []
+        positions = []
+        contents = []
+        for sent in row:
+            if (sent["position"] == 'null' and sent["position"] not in positions and sent["content"] not in contents) or (sent["position"] != 'null' and sent["position"] not in positions):
+                positions.append(sent["position"])
+                contents.append(sent["content"])
+                user_annotations_d.append({"content" : sent["content"],
+                                            "position" : sent["position"],
+                                            "uuid"  : ux_uuid,
+                                            "prefix" : sent["prefix"],
+                                            "suffix" : sent["suffix"],
+                                            "deleted" : 1})
+        user_annotations_annotations_d.append({"annotations" : user_annotations_d + deleted_row})
+    print("======================")
+    print(user_annotations_annotations)
+    print("======================")
     structured_data_all = []
-    for i , j in zip(structured_data, structured_data_d):
+    for i , j , k in zip(structured_data, structured_data_d , user_annotations_annotations_d):
         structured_data_all.append({"domain" : i["domain"],
                                     "judgement" : i["judgement"] + j["judgement"],
-                                    "annotations" : i["annotations"] + j["annotations"]})
+                                    "annotations" : i["annotations"] + j["annotations"] + k["annotations"]})
+    # print("===============================")
+    # print(structured_data_all)
+    # print("++++++++++")
+    # print(user_annotations_annotations_d)
     # ml = bots['bias_bot'].get_marginalia(datam)
     data.ml['bias'] = structured_data_all
     cn = conn.cursor()

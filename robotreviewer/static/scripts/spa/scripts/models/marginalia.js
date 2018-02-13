@@ -119,10 +119,14 @@ define(function (require) {
       var report_uuid = url_parts[url_parts.length-2];
       var query_str = url[1].split("&");
       var ux_uuid = 'id';
+      var task_id = 0;
       for(var key in query_str){
         var kv = query_str[key].split("=");
         if(kv[0] == 'ux_uuid'){
           ux_uuid = kv[1];
+        }
+        if(kv[0] == 'task_id'){
+          task_id = kv[1];
         }
       }
       marginalia.forEach(function(marginalis) {
@@ -139,7 +143,7 @@ define(function (require) {
       $.ajax({
             url: '/savemarginalia/'+report_uuid+'/'+pdf_uuid+'/'+ux_uuid,
             type: "POST",
-            data: {data:JSON.stringify({marginalia: self.toJSON()})},
+            data: {data:JSON.stringify({marginalia: self.toJSON()}), task: task_id},
             success: function(data) {
               //alert(data.toSource());
             },
