@@ -40,10 +40,10 @@ USER deploy
 RUN aria2c -s 16 -x 16 -k 30M https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /var/lib/deploy/Anaconda.sh
 RUN cd /var/lib/deploy && bash Anaconda.sh -b && rm -rf Anaconda.sh
 ENV PATH=/var/lib/deploy/miniconda3/bin:$PATH
-RUN conda install python=3.5.0
+RUN conda install python=3.6
 RUN conda install cython
 RUN conda install system flask numpy scipy scikit-learn flask-wtf requests mkl mkl-service matplotlib seaborn h5py
-RUN conda install pyqt=4.11
+RUN conda install pyqt
 
 # install Python dependencies
 ADD requirements.txt /tmp/requirements.txt
