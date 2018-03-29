@@ -311,7 +311,7 @@ define(function (require) {
         },
         error: function(err) {
           //alert(err.toSource());
-          alert('Error on saving!');
+          //FDown alert('Error on saving!');
         }
       });
 
@@ -409,7 +409,7 @@ define(function (require) {
         },
         error: function(err) {
           //alert(err.toSource());
-          alert('Error on saving!');
+          //FDown alert('Error on saving!');
         }
       });
     },
