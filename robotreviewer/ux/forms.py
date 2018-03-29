@@ -8,7 +8,7 @@ class QuestionForm(Form):
     # first_question = SelectField('Have you had experience of contributing to a systematic reviews?', choices=['Yes','No'], validators=[DataRequired()])
     first_question = SelectMultipleField('In what capacity have you contributed to a systematic review? Select all that apply (press CMD & LeftMouse or WindowsKey & LeftMouse to select multiple answers):', choices=[('develop questions','develop questions'), ('planning methods or write & publish protocols', 'planning methods or write & publish protocols'), ('develop & run search', 'develop & run search'), ('select studies', 'select studies'), ('collect data', 'collect data'), ('assess risk of bias', 'assess risk of bias'), ('analyze data', 'analyze data'), ('interprete findings', 'interprete findings'), ('write & publish review', 'write & publish review')], validators=[DataRequired()])
     second_question = RadioField('How many systematic reviews have you completed?', choices=[('0','0'), ('1-5','1-5'), ('5-10','5-10'), ('More than 10','More than 10')], validators=[DataRequired()])
-    third_question = RadioField('Have you experience of using the cochrane risk of bias tool', choices=[('Yes', 'Yes'), ('No', 'No')], validators=[DataRequired()])
+    third_question = RadioField('Have you experience of using the cochrane risk of bias tool?', choices=[('Yes', 'Yes'), ('No', 'No')], validators=[DataRequired()])
     #email = StringField('Email', validators=[DataRequired("Please enter your correct email address"), Email("Please enter a valid email address!")])
     submit = SubmitField('Submit & Continue')
 
